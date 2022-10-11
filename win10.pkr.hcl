@@ -16,8 +16,8 @@ source "virtualbox-iso" "bootstrap" {
   winrm_username       = "user"
   winrm_password       = "resu"
   winrm_insecure       = true
-  vboxmanage           = [["modifyvm", "{{ .Name }}", "--chipset", "ich9", "--cpus", "2", "--memory", "2048", "--graphicscontroller", "vboxsvga", "--accelerate3d", "on", "--accelerate2dvideo", "on", "--vram", "256", "--pae", "on", "--nested-hw-virt", "on", "--paravirtprovider", "kvm", "--hpet", "on", "--hwvirtex", "on", "--largepages", "on", "--boot1", "dvd", "--boot2", "none", "--boot3", "none", "--boot4", "none"]]
-  vboxmanage_post      = [["modifyvm", "{{ .Name }}", "--boot1", "disk", "--boot2", "none", "--boot3", "none", "--boot4", "none"]]
+  vboxmanage           = [["modifyvm", "{{ .Name }}", "--chipset", "ich9", "--cpus", "2", "--memory", "2048", "--graphicscontroller", "vboxsvga", "--accelerate3d", "off", "--accelerate2dvideo", "off", "--vram", "256", "--pae", "on", "--nested-hw-virt", "on", "--paravirtprovider", "kvm", "--hpet", "on", "--hwvirtex", "on", "--largepages", "on", "--boot1", "dvd", "--boot2", "none", "--boot3", "none", "--boot4", "none"], ["storageattach", "{{ .Name }}", "--storagectl", "SATA Controller", "--port", "20", "--device", "0", "--type", "dvddrive", "--medium", "/usr/lib/virtualbox/additions/VBoxGuestAdditions.iso"]]
+  vboxmanage_post      = [["modifyvm", "{{ .Name }}", "--memory", "4096", "--boot1", "disk", "--boot2", "none", "--boot3", "none", "--boot4", "none"], ["storageattach", "{{ .Name }}", "--storagectl", "SATA Controller", "--port", "20", "--device", "0", "--type", "dvddrive", "--medium", "none"]]
   vm_name              = replace(timestamp(), ":", "꞉") # unicode replacement char for colon
 }
 

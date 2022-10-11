@@ -18,8 +18,8 @@ Set-NetConnectionProfile -InterfaceIndex $ifaceinfo.InterfaceIndex -NetworkCateg
 # ===
 
 # disable hibernation
-Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\Power\ -name HiberFileSizePercent -value 0
-Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\Power\ -name HibernateEnabled -value 0
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power\" -Name "HiberFileSizePercent" -Value 0 -Force
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power\" -Name "HibernateEnabled" -Value 0 -Force
 
 # disable password expiration
 wmic useraccount where "name='user'" set PasswordExpires=FALSE
@@ -32,6 +32,14 @@ if ($Updates.ReadOnly -eq $False) {
   $Updates.Refresh()
   Write-Output "Automatic Windows Updates disabled."
 }
+
+# disable telemetry
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppHost\" -Name "EnableWebContentEvaluation" -Value 0 -Force
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo\" -Name "Enabled" -Value 0 -Force
+Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo\" -Name "Id" -Force
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection\" -Name "AllowTelemetry" -Value 0 -Force
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection\" -Name "MaxTelemetryAllowed" -Value 0 -Force
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration\" -Name "Status" -Value 0 -Force
 
 # install guest additions
 Get-ChildItem "e:\cert\" *.cer | ForEach-Object {

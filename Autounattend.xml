@@ -116,6 +116,9 @@
       <OOBE>
         <ProtectYourPC>1</ProtectYourPC>
         <NetworkLocation>Work</NetworkLocation>
+        <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
+        <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+        <HideEULAPage>true</HideEULAPage>
       </OOBE>
       <UserAccounts>
         <AdministratorPassword>
