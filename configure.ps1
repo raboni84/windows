@@ -2,6 +2,9 @@
 # https://github.com/luciusbono/Packer-Windows10
 # https://github.com/joefitzgerald/packer-windows
 
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force
+C:/Windows/SysWOW64/cmd.exe /c powershell -Command "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force"
+
 # ===
 # Network
 # ===

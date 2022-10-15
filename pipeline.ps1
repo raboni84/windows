@@ -40,3 +40,9 @@ function Packer-BuildAppliance {
 if ((Packer-BuildAppliance -SearchFileName "*windows10-bootstrap*.ovf" -ArgList "build -force -only=virtualbox-iso.bootstrap win10.pkr.hcl") -ne 0) {
 	break
 }
+if ((Packer-BuildAppliance -SearchFileName "*windows10-debuggee*.ovf" -ArgList "build -force -only=virtualbox-ovf.debuggee win10.pkr.hcl") -ne 0) {
+	break
+}
+if ((Packer-BuildAppliance -SearchFileName "*windows10-debugger*.ovf" -ArgList "build -force -only=virtualbox-ovf.debugger win10.pkr.hcl") -ne 0) {
+	break
+}
