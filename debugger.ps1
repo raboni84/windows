@@ -28,6 +28,7 @@ Get-ChildItem "$ENV:WINDIR" -recurse | where {$_.extension -in ".exe",".dll",".s
   $pdb = & "C:\Program Files\Rizin\bin\rz-bin.exe" -I $_.FullName | Select-String -Pattern 'dbg_file +([^$]+)' | Select-Object -ExpandProperty Matches | Select-Object -ExpandProperty Groups | Select-Object -ExpandProperty Value -Skip 1
   $guid = & "C:\Program Files\Rizin\bin\rz-bin.exe" -I $_.FullName | Select-String -Pattern 'guid +([0-9a-fA-F]+)' | Select-Object -ExpandProperty Matches | Select-Object -ExpandProperty Groups | Select-Object -ExpandProperty Value -Skip 1
   if ($pdb -And $guid) {
+    $pdb = Split-Path $pdb -Leaf
     Write-Host "$($pdb)"
     $linktodbg = "http://msdl.microsoft.com/download/symbols/$($pdb)/$($guid)/$($pdb)"
     $locallink = "$($ENV:WINDIR)/SYMBOLS/$($pdb)/$($guid)/$($pdb)"
