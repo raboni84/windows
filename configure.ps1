@@ -5,6 +5,9 @@
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force
 C:/Windows/SysWOW64/cmd.exe /c powershell -Command "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force"
 
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+Install-Module -Name ThreadJob -MinimumVersion 2.0.3 -Force
+
 # ===
 # Network
 # ===
