@@ -34,7 +34,7 @@ source "virtualbox-ovf" "debuggee" {
   winrm_username       = "user"
   winrm_password       = "resu"
   winrm_insecure       = true
-  vboxmanage_post      = [["modifyvm", "{{ .Name }}", "--cableconnected1", "off", "--cableconnected2", "on"]]
+  vboxmanage           = [["modifyvm", "{{ .Name }}", "--nic2", "intnet", "--cableconnected2", "on", "--intnet2", "localdomain"]]
   vm_name              = replace(timestamp(), ":", "꞉") # unicode replacement char for colon
 }
 
@@ -51,8 +51,8 @@ source "virtualbox-ovf" "debugger" {
   winrm_username       = "user"
   winrm_password       = "resu"
   winrm_insecure       = true
-  vboxmanage           = [["modifyvm", "{{ .Name }}", "--nic2", "intnet", "--cableconnected2", "off", "--intnet2", "localdomain"], ["storageattach", "{{ .Name }}", "--storagectl", "SATA Controller", "--port", "20", "--device", "0", "--type", "dvddrive", "--medium", "win10sdk.iso"]]
-  vboxmanage_post      = [["modifyvm", "{{ .Name }}", "--cableconnected1", "off", "--cableconnected2", "on"], ["storageattach", "{{ .Name }}", "--storagectl", "SATA Controller", "--port", "20", "--device", "0", "--type", "dvddrive", "--medium", "none"]]
+  vboxmanage           = [["modifyvm", "{{ .Name }}", "--nic2", "intnet", "--cableconnected2", "on", "--intnet2", "localdomain"], ["storageattach", "{{ .Name }}", "--storagectl", "SATA Controller", "--port", "20", "--device", "0", "--type", "dvddrive", "--medium", "win10sdk.iso"]]
+  vboxmanage_post      = [["storageattach", "{{ .Name }}", "--storagectl", "SATA Controller", "--port", "20", "--device", "0", "--type", "dvddrive", "--medium", "none"]]
   vm_name              = replace(timestamp(), ":", "꞉") # unicode replacement char for colon
 }
 

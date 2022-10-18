@@ -22,7 +22,7 @@ Invoke-WebRequest -Uri "https://github.com/rizinorg/rizin/releases/download/v0.4
 Write-Host "Start installing rizin"
 Start-Process -NoNewWindow -Wait -FilePath "$ENV:USERPROFILE/Desktop/rizin_installer.exe" -WorkingDirectory "$ENV:USERPROFILE/Desktop" -ArgumentList "/SILENT","/ALLUSERS","/NORESTART"
 
-# Symbols for Windows 10
+# Symbols for Windows 10 (this'll take a freaking long time)
 New-Item -Path "$ENV:WINDIR" -Name "SYMBOLS" -ItemType "directory" -Force | Out-Null
 $syspaths = "$ENV:WINDIR","$ENV:WINDIR/System32","$ENV:WINDIR/System32/Drivers","$ENV:WINDIR/SysWOW64"
 $files = Get-ChildItem $syspaths | Where { $_.Extension -in ".exe",".dll",".sys" } | Select-Object -ExpandProperty FullName
