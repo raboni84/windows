@@ -11,7 +11,7 @@ source "virtualbox-iso" "bootstrap" {
   guest_additions_mode = "disable"
   output_directory     = "output/bootstrap"
   output_filename      = "../windows10-bootstrap-x86_64"
-  floppy_files         = ["Autounattend.xml", "configure.ps1"]
+  floppy_files         = ["Autounattend.xml", "configure.ps1", "firstrun.ps1"]
   communicator         = "winrm"
   winrm_username       = "user"
   winrm_password       = "resu"
@@ -51,13 +51,17 @@ source "virtualbox-ovf" "debugger" {
   winrm_username       = "user"
   winrm_password       = "resu"
   winrm_insecure       = true
-  vboxmanage           = [["modifyvm", "{{ .Name }}", "--nic2", "intnet", "--cableconnected2", "on", "--intnet2", "localdomain"], ["storageattach", "{{ .Name }}", "--storagectl", "SATA Controller", "--port", "20", "--device", "0", "--type", "dvddrive", "--medium", "win10sdk.iso"]]
-  vboxmanage_post      = [["storageattach", "{{ .Name }}", "--storagectl", "SATA Controller", "--port", "20", "--device", "0", "--type", "dvddrive", "--medium", "none"]]
+  vboxmanage           = [["modifyvm", "{{ .Name }}", "--nic2", "intnet", "--cableconnected2", "on", "--intnet2", "localdomain"]]
   vm_name              = replace(timestamp(), ":", "꞉") # unicode replacement char for colon
 }
 
 build {
   sources = ["source.virtualbox-iso.bootstrap", "source.virtualbox-ovf.debuggee", "source.virtualbox-ovf.debugger"]
+
+  provisioner "windows-shell" {
+    inline = ["powershell -NoLogo -ExecutionPolicy RemoteSigned -File A:/firstrun.ps1"]
+    only   = ["virtualbox-iso.bootstrap"]
+  }
 
   provisioner "windows-shell" {
     inline = ["powershell -NoLogo -ExecutionPolicy RemoteSigned -File A:/debuggee.ps1"]

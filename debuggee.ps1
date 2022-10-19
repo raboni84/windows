@@ -8,7 +8,3 @@ bcdedit /set "$($otherboot)" hostip 169.254.0.1 nodhcp
 bcdedit /set "$($otherboot)" key a.b.c.d
 bcdedit /set "$($otherboot)" busparams 0.8.0
 bcdedit /default "$($otherboot)"
-
-#bcdedit /debug ON
-#bcdedit /dbgsettings NET HOSTIP:169.254.0.1 PORT:50000 KEY:a.b.c.d nodhcp
-#bcdedit /set busparams 0.8.0

@@ -1,15 +1,11 @@
 # WinDbg Preview
-Write-Host "Trying to find msixbundle url for windbg preview"
+Write-Host "Trying to find appx url for windbg preview"
 $WebResponse = Invoke-WebRequest -Method 'POST' -Uri 'https://store.rg-adguard.net/api/GetFiles' -Body "type=PackageFamilyName&url=Microsoft.WinDbg_8wekyb3d8bbwe&ring=Retail" -ContentType 'application/x-www-form-urlencoded' -UseBasicParsing -UserAgent "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:99.0) Gecko/20100101 Firefox/99.0"
-$LinkMatch = $WebResponse.Links | where { $_ -like '*_neutral*.msixbundle*' } | Select-String -Pattern '(?<=a href=").+(?=" r)' | Select-Object -ExpandProperty Matches | Select-Object -ExpandProperty Value
+$LinkMatch = $WebResponse.Links | where { $_ -like '*_neutral*.appx*' } | Select-String -Pattern '(?<=a href=").+(?=" r)' | Select-Object -ExpandProperty Matches | Select-Object -ExpandProperty Value -First 1
 Write-Host "Downloading from $($LinkMatch)"
-Invoke-WebRequest -Uri $LinkMatch -OutFile "$ENV:USERPROFILE/Desktop/windbg.msixbundle" -UseBasicParsing -UserAgent "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:99.0) Gecko/20100101 Firefox/99.0"
-Write-Host "Installing $ENV:USERPROFILE/Desktop/windbg.msixbundle"
-Add-AppxPackage -Path "$ENV:USERPROFILE/Desktop/windbg.msixbundle" -RequiredContentGroupOnly
-Write-Host "Done"
-
-# Windows 10 SDK
-Start-Process -NoNewWindow -Wait -FilePath "E:/winsdksetup.exe" -WorkingDirectory "E:/" -ArgumentList "/features","+","/quiet","/norestart"
+Invoke-WebRequest -Uri $LinkMatch -OutFile "$ENV:USERPROFILE/Desktop/windbg.appx" -UseBasicParsing -UserAgent "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:99.0) Gecko/20100101 Firefox/99.0"
+Write-Host "Installing $ENV:USERPROFILE/Desktop/windbg.appx"
+Start-Process -NoNewWindow -Wait -FilePath "$ENV:WINDIR/System32/dism.exe" -WorkingDirectory "$ENV:WINDIR/System32" -ArgumentList "/Online","/Add-ProvisionedAppxPackage","/PackagePath:`"$ENV:USERPROFILE/Desktop/windbg.appx`"","/SkipLicense"
 
 # Rizin
 Write-Host "Downloading vcruntime140"
@@ -55,8 +51,8 @@ foreach ($file in $files) {
           New-Item -Path "$ENV:WINDIR/SYMBOLS/$($pdb)" -Name $guid -ItemType "directory" -Force | Out-Null
           # ask again because of multithreading and filename changes
           if (-Not(Test-Path -Path $locallink -PathType Leaf)) {
-            Invoke-WebRequest -Uri $linktodbg -OutFile $locallink -UseBasicParsing -UserAgent "Microsoft-Symbol-Server/10.0.10240.9"
-            Add-Content "$ENV:USERPROFILE/Desktop/symbols_success.txt" "$($jobfile),$($pdb),$($guid)"
+            #Invoke-WebRequest -Uri $linktodbg -OutFile $locallink -UseBasicParsing -UserAgent "Microsoft-Symbol-Server/10.0.10240.9"
+            Add-Content "$ENV:USERPROFILE/Desktop/symbols_success.txt" "$($jobfile),$($pdb),$($guid),$($linktodbg)"
           }
         } else {
           Add-Content "$ENV:USERPROFILE/Desktop/symbols_failure.txt" "$($jobfile),#$($StatusCode)"
@@ -70,12 +66,6 @@ foreach ($file in $files) {
 
 Write-Host "Processing..."
 Wait-Job -Job $jobs
-
-#Get-ChildItem $ENV:WINDIR -recurse | where {$_.extension -in ".exe",".dll",".sys"} | % {
-#  Add-Content "$ENV:WINDIR\exe_dll.txt" "$($_.FullName)"
-#}
-#New-Item -Path "$ENV:WINDIR" -Name "SYMBOLS" -ItemType "directory"
-#Start-Process -NoNewWindow -Wait -FilePath "C:\Program Files (x86)\Windows Kits\10\Debuggers\x64\symchk.exe" -WorkingDirectory "$ENV:WINDIR\SYMBOLS" -ArgumentList "/v","/om","$ENV:WINDIR\Manifest.txt","/it","$ENV:WINDIR\exe_dll.txt","/s","srv*$ENV:USERPROFILE\Desktop\symbols*http://msdl.microsoft.com/download/symbols"
 
 $adapter = Get-NetAdapter -Name "Ethernet 2"
 If (($adapter | Get-NetIPConfiguration).IPv4Address.IPAddress) {
